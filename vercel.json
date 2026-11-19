@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "python -m pip install -r requirements.txt",
+  "buildCommand": "python scripts/prepare_nltk.py",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "includeFiles": "{src/**,data/**,nltk_data/**}",
+      "excludeFiles": "{.venv/**,tests/**,app.py,**/__pycache__/**}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index?operation=:path*" }
+  ]
+}

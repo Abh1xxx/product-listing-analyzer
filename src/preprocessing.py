@@ -3,10 +3,24 @@
 from collections import Counter
 import re
 from functools import lru_cache
+from pathlib import Path
+from tempfile import gettempdir
 
 import nltk
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import PunktSentenceTokenizer, TreebankWordTokenizer
+
+
+_bundled_data = Path(__file__).resolve().parents[1] / "nltk_data"
+_download_data = Path(gettempdir()) / "product_listing_nltk_data"
+nltk.data.path.insert(0, str(_bundled_data))
+nltk.data.path.append(str(_download_data))
+
+
+def _download_resource(resource: str) -> bool:
+    """Use writable storage when the application runs in a Vercel Function."""
+    _download_data.mkdir(parents=True, exist_ok=True)
+    return nltk.download(resource, download_dir=str(_download_data), quiet=True)
 
 
 _word_tokenizer = TreebankWordTokenizer()
@@ -41,7 +55,7 @@ def get_stop_words() -> set[str]:
     try:
         return set(nltk.corpus.stopwords.words("english"))
     except LookupError:
-        if not nltk.download("stopwords", quiet=True):
+        if not _download_resource("stopwords"):
             raise LookupError(
                 "NLTK stop words are unavailable. Run "
                 "`python -m nltk.downloader stopwords` and try again."
@@ -63,13 +77,15 @@ def stem_tokens(tokens: list[str]) -> list[str]:
 @lru_cache(maxsize=1)
 def _get_lemmatizer() -> WordNetLemmatizer:
     try:
-        nltk.data.find("corpora/wordnet")
+        # WordNet is normally distributed as a zip, which ensure_loaded handles.
+        nltk.corpus.wordnet.ensure_loaded()
     except LookupError:
-        if not nltk.download("wordnet", quiet=True):
+        if not _download_resource("wordnet"):
             raise LookupError(
                 "NLTK WordNet data is unavailable. Run "
                 "`python -m nltk.downloader wordnet` and try again."
             )
+        nltk.corpus.wordnet.ensure_loaded()
     return WordNetLemmatizer()
 
 

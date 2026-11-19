@@ -55,10 +55,28 @@ Use Python 3.10 or newer. From this directory:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-local.txt
 python -m nltk.downloader stopwords wordnet
 streamlit run app.py
 ```
+
+### Web deployment on Vercel
+
+The hosted interface in `public/` calls the Python HTTP entry point in `api/index.py`. It uses the same functions in `src/` and the same workbook as the Streamlit interface. It includes analysis results, dataset overview, and the scoring guide.
+
+Import this GitHub repository into Vercel with the **Other** framework preset. Keep the root directory at the repository root. The committed `vercel.json` supplies the install command, build command, output directory, and API routing. No API keys or environment variables are required.
+
+The build downloads NLTK stopwords and WordNet into `nltk_data/` and includes them with the Python function. The build fails if either resource is unavailable. Runtime fallback downloads use writable temporary storage; WordNet also supports its normal zipped distribution. Analysis text is processed by the Python server without an external AI service.
+
+For local testing of the hosted interface:
+
+```powershell
+python -m pip install -r requirements.txt
+python scripts/prepare_nltk.py
+python api/index.py
+```
+
+Open `http://127.0.0.1:8000`. `requirements.txt` contains the shared server dependencies; `requirements-local.txt` additionally installs Streamlit.
 
 NLTK's word and sentence tokenizers used here do not require a separate Punkt model. Stop words and WordNet are downloaded by the setup command; the application also attempts to retrieve each resource on first use and displays an actionable message if it cannot.
 

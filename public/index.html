@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore product listings with explainable NLP, corpus TF-IDF keywords and a transparent educational quality score.">
+  <title>Product Listing Analyzer</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+<header><a class="brand" href="/">PL<span>A</span> <small>Product Listing Analyzer</small></a><span class="badge">NLP course project</span></header>
+<main>
+  <section class="intro"><p class="eyebrow">FROM PRODUCT TEXT TO CLEAR INSIGHTS</p><h1>Understand your<br>product listing.</h1><p>Discover keywords, explore word forms, and see how clearly your listing describes a product.</p></section>
+  <nav aria-label="Sections"><button class="tab active" data-page="analyze" aria-pressed="true">Analyze listing</button><button class="tab" data-page="dataset" aria-pressed="false">Dataset overview</button><button class="tab" data-page="guide" aria-pressed="false">Scoring guide</button></nav>
+  <section id="analyze" class="page">
+    <form id="listing-form" class="card">
+      <div class="section-title"><div><p class="eyebrow">01 / YOUR INPUT</p><h2>Start with a listing</h2></div><label class="example-label">Try an example<select id="example"><option value="">Choose a product</option><option value="shirt">Cotton T-shirt</option><option value="headphones">Wireless headphones</option></select></label></div>
+      <label for="title">Product title</label><input id="title" name="title" placeholder="e.g. Northstar Blue Cotton T-Shirt for Everyday Wear" required maxlength="250">
+      <label for="description">Product description</label><textarea id="description" name="description" rows="5" placeholder="Describe the materials, features, fit, and everyday use…" required maxlength="5000"></textarea>
+      <div class="form-bottom"><p>Local NLP techniques. No external AI service.</p><button id="submit" class="primary" type="submit">Analyze listing <span aria-hidden="true">↗</span></button></div>
+    </form>
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="results" hidden aria-label="Analysis results" tabindex="-1">
+      <div class="card score-card"><div><p class="eyebrow">02 / LISTING INSIGHTS</p><h2>Your listing, explained</h2><p>Educational rule-based score. Not an official marketplace ranking or sales prediction.</p></div><div class="score"><strong id="total"></strong><span>/ 100</span></div></div>
+      <div id="components" class="components"></div>
+      <div class="grid"><article class="card"><h3>Corpus TF-IDF keywords</h3><div id="keywords"></div><p id="similarity" class="muted"></p></article><article class="card"><h3>Dataset-backed attributes</h3><div id="attributes"></div><p class="muted">No match means the rule did not detect a known value; it does not prove an attribute is absent.</p></article></div>
+      <article class="card"><h3>Problems &amp; practical suggestions</h3><div id="advice"></div></article>
+      <details class="card" open><summary>Original and cleaned text</summary><div id="cleaned"></div></details>
+      <details class="card"><summary>Tokenization &amp; word forms</summary><div id="counts" class="chips"></div><div id="tokens"></div></details>
+      <details class="card"><summary>Repetition &amp; common phrases</summary><div id="phrases"></div></details>
+      <details class="card"><summary>Score calculation rules</summary><div id="rules"></div></details>
+    </section>
+  </section>
+  <section id="dataset" class="page card" hidden><p class="eyebrow">THE CORPUS</p><h2>Dataset overview</h2><p id="dataset-status" role="status">Loading dataset…</p><div id="dataset-details"></div></section>
+  <section id="guide" class="page card" hidden><p class="eyebrow">EXPLAINABLE BY DESIGN</p><h2>How the score works</h2><p>Five components contribute up to 20 points each. This is a project-defined educational metric, with no validation against marketplace ranking, human ratings, or sales.</p><dl class="guide"><dt>Title completeness</dt><dd>20 for at least 5 words; 12 for 3–4; 5 for 1–2; 0 if empty.</dd><dt>Keyword coverage</dt><dd>20 × the fraction of extracted corpus-TF-IDF keywords that appear in the title.</dd><dt>Description quality</dt><dd>Up to 8 for 30+ words (4 for 15–29), 6 for 2+ sentences (3 for 1), and 6 for 10+ unique words (3 for 5–9).</dd><dt>Attribute coverage</dt><dd>20 × detected attribute categories ÷ categories supported by dataset columns. Detection uses phrase matching against corpus values.</dd><dt>Repetition and readability</dt><dd>Start at 20. Repeated-token ratios above 5%, 10%, or 20% subtract 2, 5, or 10 points. A title over 150 characters and a sentence over 35 words each subtract 5.</dd></dl><h3>What to keep in mind</h3><p>TF-IDF measures corpus rarity and word overlap, not meaning. Attribute rules can miss synonyms. Porter stems may not be dictionary words; WordNet lemmas use noun forms by default. Sentence splitting can misread abbreviations.</p></section>
+</main>
+<footer>Product Listing Analyzer <span>NLTK · TF-IDF · Explainable rules</span></footer>
+</body></html>
